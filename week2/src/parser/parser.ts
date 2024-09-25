@@ -87,7 +87,7 @@ export const parser = (tokens: Token[]): boolean => {
 
         if (tokens[current] && tokens[current].type === TokenTypes.RIGHT_BRACE) {
             current++
-
+            
             if (tokens[current] && tokens[current].type !== TokenTypes.COMMA && tokens[current].type !== TokenTypes.RIGHT_BRACE && tokens[current].type !== TokenTypes.RIGHT_BRACKET) {
                 logError("unexpected token after closing '}'", tokens[current])
                 return false
@@ -118,6 +118,10 @@ export const parser = (tokens: Token[]): boolean => {
 
             if (token.type === TokenTypes.COMMA) {
                 current++
+                if (tokens[current] && tokens[current].type === TokenTypes.RIGHT_BRACKET) {
+                    console.error(`Parsing Error at line ${tokens[current].line}: Unexpected trailing comma before ']' in array`)
+                    return false
+                }
             } else if (token.type !== TokenTypes.RIGHT_BRACKET) {
                 logError("']' or ',' to close or continue an array", token)
                 return false
