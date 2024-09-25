@@ -1,13 +1,12 @@
 import fs from 'fs'
 import path from 'path'
-import { lexer } from '../src/lexer/lexer'
-import { TokenTypes } from '../src/lexer/tokenTypes'
-import { parser } from '../src/parser/parser'
+import { lexer } from './src/lexer/lexer'
+import { parser } from './src/parser/parser'
 
 const isValidJson = (input: string): boolean => {
   try {
     const tokens = lexer(input)
-    if (tokens === undefined || tokens.length == 0) {
+    if (tokens === undefined || tokens.length === 0) {
       return false
     }
     return parser(tokens)
@@ -30,23 +29,35 @@ const runTest = (filePath: string): void => {
 
 const runTestsInFolder = (folderPath: string): void => {
   const files = fs.readdirSync(folderPath)
+
   files.forEach(file => {
     const fullPath = path.join(folderPath, file)
-    if (file.endsWith('.json')) {
-      runTest(fullPath)
+    const stat = fs.statSync(fullPath)
+
+    if (stat.isDirectory()) {
+      runTestsInFolder(fullPath) 
+    } else if (file.endsWith('.json')) {
+      runTest(fullPath) 
     }
   })
 }
 
 const main = () => {
-  const testsDir = path.join(__dirname, '.')
-  const subfolders = fs.readdirSync(testsDir).filter(file => fs.statSync(path.join(testsDir, file)).isDirectory())
+  const folderName = process.argv[2] 
+  if (!folderName) {
+    console.error('Please provide a folder name to run tests.')
+    process.exit(1)
+  }
 
-  subfolders.forEach(subfolder => {
-    const subfolderPath = path.join(testsDir, subfolder)
-    console.log(`Running tests in folder: ${subfolder}`)
-    runTestsInFolder(subfolderPath)
-  })
+  const folderPath = path.resolve(__dirname, folderName) 
+  
+  if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
+    console.error(`The folder "${folderName}" does not exist or is not a directory.`)
+    process.exit(1)
+  }
+
+  console.log(`Running tests in folder: ${folderName}`)
+  runTestsInFolder(folderPath)
 }
 
 main()

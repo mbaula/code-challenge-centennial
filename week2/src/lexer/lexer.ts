@@ -81,23 +81,28 @@ export const lexer = (input: String): Token[] => {
             case NUMBERS.test(char):
                 let numValue = ''
                 let decimalFound = false
-
-                while (current < input.length && (NUMBERS.test(input[current]) || (input[current] === '.' && !decimalFound))) {
+                let exponentFound = false
+            
+                while (current < input.length && (NUMBERS.test(input[current]) || (input[current] === '.' && !decimalFound) || ((input[current] === 'e' || input[current] === 'E') && !exponentFound))) {
                     if (input[current] === '.') {
                         decimalFound = true
+                    }
+                    if (input[current] === 'e' || input[current] === 'E') {
+                        exponentFound = true
+                        numValue += input[current]
+                        current++
+                        if (input[current] === '+' || input[current] === '-') {
+                            numValue += input[current]
+                            current++
+                        }
+                        continue
                     }
                     numValue += input[current]
                     current++
                 }
-
-                const parsedNumber = parseFloat(numValue)
-
-                if (!isNaN(parsedNumber)) {
-                    tokens.push(createToken(TokenTypes.NUMBER, parsedNumber))
-                } else {
-                    throw new Error(`Invalid number format: ${numValue}`)
-                }
-                break
+            
+                tokens.push(createToken(TokenTypes.NUMBER, numValue))
+                break                
             
             case char === ' ':
             case char === '\t':

@@ -6,7 +6,7 @@
         "start": "ts-node src/index.ts",
         "build": "tsc",
         "test": "jest",
-        "test:json": "ts-node tests/runTests.ts"
+        "test:json": "ts-node runTests.ts"
     },
     "devDependencies": {
         "@types/jest": "^27.0.0",
