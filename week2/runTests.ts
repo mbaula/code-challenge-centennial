@@ -43,21 +43,31 @@ const runTestsInFolder = (folderPath: string): void => {
 }
 
 const main = () => {
-  const folderName = process.argv[2] 
-  if (!folderName) {
-    console.error('Please provide a folder name to run tests.')
+  const inputPath = process.argv[2] 
+  if (!inputPath) {
+    console.error('Please provide a file or folder path to run tests.')
     process.exit(1)
   }
 
-  const folderPath = path.resolve(__dirname, folderName) 
-  
-  if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
-    console.error(`The folder "${folderName}" does not exist or is not a directory.`)
+  const resolvedPath = path.resolve(__dirname, inputPath)
+
+  if (!fs.existsSync(resolvedPath)) {
+    console.error(`The path "${inputPath}" does not exist.`)
     process.exit(1)
   }
 
-  console.log(`Running tests in folder: ${folderName}`)
-  runTestsInFolder(folderPath)
+  const stat = fs.statSync(resolvedPath)
+
+  if (stat.isDirectory()) {
+    console.log(`Running tests in folder: ${inputPath}`)
+    runTestsInFolder(resolvedPath)
+  } else if (stat.isFile() && inputPath.endsWith('.json')) {
+    console.log(`Running test on file: ${inputPath}`)
+    runTest(resolvedPath)
+  } else {
+    console.error(`The path "${inputPath}" is not a valid JSON file or directory.`)
+    process.exit(1)
+  }
 }
 
 main()

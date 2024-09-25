@@ -4,5 +4,6 @@ type ValidValueType = string | number | boolean | null;
 
 export type Token = {
   type: TokenTypes;
-  value?: ValidValueType;
+  value: ValidValueType;
+  line: number;
 };

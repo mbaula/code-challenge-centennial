@@ -3,6 +3,6 @@ import { Token } from '../lexer/token';
 
 type ValidValueType = string | number | boolean | null;
 
-export const createToken = (type: TokenTypes, value?: ValidValueType): Token => {
-  return { type, value };
+export const createToken = (type: TokenTypes, value: ValidValueType, line: number): Token => {
+  return { type, value, line };
 };
