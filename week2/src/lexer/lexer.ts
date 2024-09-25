@@ -105,6 +105,16 @@ export const lexer = (input: String): Token[] => {
             case char === '\r':
                 current++ // Skip over the whitespace
                 break
+            
+            case char === '[':
+                tokens.push(createToken(TokenTypes.LEFT_BRACKET, '['))
+                current++
+                break
+
+            case char === ']':
+                tokens.push(createToken(TokenTypes.RIGHT_BRACKET, ']'))
+                current++
+                break
 
             default:
                 tokens.push(createToken(TokenTypes.UNKNOWN, char))

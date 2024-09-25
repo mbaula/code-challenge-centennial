@@ -9,5 +9,7 @@ export enum TokenTypes {
     TRUE = 'TRUE',
     FALSE = 'FALSE',
     NULL = 'NULL',
-    NUMBER = 'NUMBER'
+    NUMBER = 'NUMBER',
+    LEFT_BRACKET = 'LEFT_BRACKET',
+    RIGHT_BRACKET = 'RIGHT_BRACKET',
 }
