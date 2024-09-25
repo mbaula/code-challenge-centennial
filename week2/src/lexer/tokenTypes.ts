@@ -5,5 +5,9 @@ export enum TokenTypes {
     UNKNOWN = 'UNKNOWN',
     COLON = 'COLON',
     COMMA = 'COMMA',
-    STRING = 'STRING'
+    STRING = 'STRING',
+    TRUE = 'TRUE',
+    FALSE = 'FALSE',
+    NULL = 'NULL',
+    NUMBER = 'NUMBER'
 }

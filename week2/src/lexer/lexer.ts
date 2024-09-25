@@ -5,32 +5,33 @@ import { createToken } from '../helpers/createToken'
 export const lexer = (input: String): Token[] => {
     let current = 0
     const tokens: Token[] = []
+    const NUMBERS = /[0-9]/
 
     while (current < input.length && input.length !== 0) {
         let char = input[current]
 
-        switch(char) {
-            case '{':
+        switch(true) {
+            case char === '{':
                 tokens.push(createToken(TokenTypes.LEFT_BRACE, '{'))
                 current++
                 break
             
-            case '}': 
+            case char === '}': 
                 tokens.push(createToken(TokenTypes.RIGHT_BRACE, '}'))
                 current++
                 break
             
-            case ':':
+            case char === ':':
                 tokens.push(createToken(TokenTypes.COLON, ':'))
                 current++
                 break
             
-            case ',':
+            case char === ',':
                 tokens.push(createToken(TokenTypes.COMMA, ","))
                 current++
                 break
             
-            case '"':
+            case char === '"':
                 let value = ''
                 current++
                 while (current < input.length && input[current] != '"') {
@@ -47,10 +48,61 @@ export const lexer = (input: String): Token[] => {
                 }
                 break
             
-            case ' ':
-            case '\t':
-            case '\n':
-            case '\r':
+            case char === 't':
+                if (input.slice(current, current + 4) === 'true') {
+                    tokens.push(createToken(TokenTypes.TRUE, true))
+                    current += 4
+                } else {
+                    tokens.push(createToken(TokenTypes.UNKNOWN, char))
+                    current++
+                }
+                break
+
+            case char === 'f':
+                if (input.slice(current, current + 5) === 'false') {
+                    tokens.push(createToken(TokenTypes.FALSE, false))
+                    current += 5
+                } else {
+                    tokens.push(createToken(TokenTypes.UNKNOWN, char))
+                    current++
+                }
+                break
+            
+            case char === 'n':
+                if (input.slice(current, current + 4) === 'null') {
+                    tokens.push(createToken(TokenTypes.NULL, null))
+                    current += 4
+                } else {
+                    tokens.push(createToken(TokenTypes.UNKNOWN, char))
+                    current++
+                }
+                break
+            
+            case NUMBERS.test(char):
+                let numValue = ''
+                let decimalFound = false
+
+                while (current < input.length && (NUMBERS.test(input[current]) || (input[current] === '.' && !decimalFound))) {
+                    if (input[current] === '.') {
+                        decimalFound = true
+                    }
+                    numValue += input[current]
+                    current++
+                }
+
+                const parsedNumber = parseFloat(numValue)
+
+                if (!isNaN(parsedNumber)) {
+                    tokens.push(createToken(TokenTypes.NUMBER, parsedNumber))
+                } else {
+                    throw new Error(`Invalid number format: ${numValue}`)
+                }
+                break
+            
+            case char === ' ':
+            case char === '\t':
+            case char === '\n':
+            case char === '\r':
                 current++ // Skip over the whitespace
                 break
 
