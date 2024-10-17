@@ -130,6 +130,12 @@ export const parser = (tokens: Token[]): boolean => {
 
         if (tokens[current] && tokens[current].type === TokenTypes.RIGHT_BRACKET) {
             current++
+            
+            if (tokens[current] && tokens[current].type === TokenTypes.COMMA) {
+                console.error("Unexpected comma after closing ']' in array", tokens[current])
+                return false
+            }
+        
             return true
         } else {
             logError("']' to close an array", tokens[current] || tokens[current - 1])
